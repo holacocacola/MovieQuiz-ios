@@ -1,13 +1,6 @@
-//
-//  AlertPresenter.swift
-//  MovieQuiz
-//
-//  Created by d m on 14.02.2026.
-//
-
 import UIKit
 
-class AlertPresenter {
+final class AlertPresenter {
     func show(in vc: UIViewController, model: AlertModel) {
         let alert = UIAlertController(
             title: model.title,

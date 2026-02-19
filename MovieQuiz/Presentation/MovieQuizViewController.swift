@@ -37,10 +37,11 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     // MARK: - Actions
     @IBAction private func noButtonClicked(_ sender: Any) {
         setAnswerButtonsEnabled(false)
-        guard let currentQuestion = currentQuestion else {
+        guard let currentQuestion else {
             return
         }
-        showAnswerResult(isCorrect: currentQuestion.correctAnswer == false)
+        //showAnswerResult(isCorrect: currentQuestion.correctAnswer == false)
+        showAnswerResult(isCorrect: !currentQuestion.correctAnswer)
     }
 
     @IBAction private func yesButtonClicked(_ sender: Any) {
@@ -48,7 +49,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         guard let currentQuestion = currentQuestion else {
             return
         }
-        showAnswerResult(isCorrect: currentQuestion.correctAnswer == true)
+        //showAnswerResult(isCorrect: currentQuestion.correctAnswer == true)
+        showAnswerResult(isCorrect: currentQuestion.correctAnswer)
     }
 
     // MARK: - UI/Render
@@ -94,10 +96,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             
             // Сохраняем текущую игру
             let currentGame = GameResult(
-                        correct: correctAnswers,
-                        total: questionsAmount,
-                        date: Date()
-                    )
+                correct: correctAnswers,
+                total: questionsAmount,
+                date: Date()
+            )
             statisticService.store(current: currentGame)
             
             // Читаем обновлённую статистику и строим текст
@@ -150,7 +152,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     // MARK: - Helpers
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         QuizStepViewModel(
-            image: UIImage(named: model.image) ?? UIImage(),
+            image: UIImage(named: model.imageName) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)"
         )

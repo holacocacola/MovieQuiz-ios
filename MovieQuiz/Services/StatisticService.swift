@@ -1,10 +1,3 @@
-//
-//  StatisticService.swift
-//  MovieQuiz
-//
-//  Created by d m on 16.02.2026.
-//  Господин ревьюер, прошу простить за комменты, мне без них сложно
-
 import Foundation
 
 
@@ -30,9 +23,11 @@ final class StatisticService: StatisticServiceProtocol {
     // Лучшая игра типа GameResult
     var bestGame: GameResult {
         get {
-            GameResult( correct: storage.integer(forKey: Keys.bestGameCorrect.rawValue),
-                        total: storage.integer(forKey: Keys.bestGameTotal.rawValue),
-                        date: storage.object(forKey: Keys.bestGameDate.rawValue)  as? Date ?? Date() )
+            GameResult(
+                correct: storage.integer(forKey: Keys.bestGameCorrect.rawValue),
+                total: storage.integer(forKey: Keys.bestGameTotal.rawValue),
+                date: storage.object(forKey: Keys.bestGameDate.rawValue)  as? Date ?? Date()
+            )
         }
         set {
             storage.set(newValue.correct, forKey: Keys.bestGameCorrect.rawValue)

@@ -1,10 +1,3 @@
-//
-//  QuizStepViewModel.swift
-//  MovieQuiz
-//
-//  Created by d m on 11.02.2026.
-//
-
 import UIKit
 
 // MARK: - View Models
