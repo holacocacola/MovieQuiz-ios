@@ -3,7 +3,6 @@ import UIKit
 // MARK: - View Controller
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
-
     // MARK: - Outlets
     @IBOutlet private var buttonNo: UIButton!
     @IBOutlet private var buttonYes: UIButton!
@@ -11,13 +10,16 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet private var counterLabel: UILabel!
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var textLabel: UILabel!
+    
+    @IBOutlet private var activityIndicator: UIActivityIndicatorView!
+    
 
 
     // MARK: - State
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
     private let questionsAmount: Int = 10 //общее количество вопросов для квиза. Пусть оно будет равно десяти.
-    private var questionFactory: QuestionFactoryProtocol? = QuestionFactory()
+    private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion? //вопрос, который видит пользователь.
     private var alertPresenter = AlertPresenter()
     private let statisticService: StatisticServiceProtocol = StatisticService() //инициализация статистики
@@ -25,12 +27,20 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-                
-        let questionFactory = QuestionFactory()
-        questionFactory.setup(delegate: self)
-        self.questionFactory = questionFactory
+        activityIndicator.hidesWhenStopped = true
+        imageView.layer.cornerRadius = 20
+        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+        //let statisticService = StatisticService()
         
-        showCurrentQuestion()
+        showLoadingIndicator()
+        questionFactory?.loadData()
+        
+//        let questionFactory = QuestionFactory()
+//        questionFactory.setup(delegate: self)
+//        self.questionFactory = questionFactory
+//        
+//        showCurrentQuestion()
+//        showLoadingIndicator()
         
     }
 
@@ -139,7 +149,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
         imageView.layer.cornerRadius = 20
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in //[weak self] что бы не держать контроллер в памятилишний раз
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self else { return }
 
             self.showNextQuestionOrResult()
@@ -152,7 +162,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     // MARK: - Helpers
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         QuizStepViewModel(
-            image: UIImage(named: model.imageName) ?? UIImage(),
+            image: UIImage(data: model.imageData) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)"
         )
@@ -164,4 +174,57 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         buttonNo.isUserInteractionEnabled = enabled
         buttonYes.isUserInteractionEnabled = enabled
     }
+    
+    
+    /* комментарий к ревьюеру: брат, я понимаю, что свифт дает возможность писать это все компактней
+       например опускать completion и фигачить замыкание прямо при объявлении model.
+       Но в курсе, скажу честно, на мой взгляд недоходчиво объяснили принцип замыканий.
+       Поэтому я писал, так как я это вижу. Когда я преисполнюсь познаниями, я буду писать, как автор этого
+       замечательного курса(всех благ ему и здоровья).
+     */
+    private func showNetworkError(message: String) {
+        showLoadingIndicator()
+        
+        // создаю отложенное действие
+        let action: () -> Void = { [weak self] in
+            
+            // проверяем, что self еще существует, потому что [weak self] я не требую держать ViewController
+            guard let strongSelf = self else { return }
+            
+            //выполнение логику
+            strongSelf.currentQuestionIndex = 0
+            strongSelf.correctAnswers = 0
+            strongSelf.questionFactory?.requestNextQuestion()
+        }
+        
+        // создание модели алерта + отложенное действие action
+        let model = AlertModel(title: "Ошибка",
+                               message: message,
+                               buttonText: "Попробовать еще раз",
+                               completion: action
+        )
+        
+        // показываю алерт и выполняем отложенное действие
+        alertPresenter.show(in: self, model: model)
+        
+    }
+    
+    func didLoadDataFromServer() {
+        hideLoadingIndicator()
+        questionFactory?.requestNextQuestion()
+    }
+    
+    func didFailToLoadData(with error: Error) {
+        showNetworkError(message: error.localizedDescription) // возьмём в качестве сообщения описание ошибки
+    }
+    
+    
+    private func showLoadingIndicator() {
+        activityIndicator.startAnimating()
+    }
+
+    private func hideLoadingIndicator() {
+        activityIndicator.stopAnimating()
+    }
+    
 }
