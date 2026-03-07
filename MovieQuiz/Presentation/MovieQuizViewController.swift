@@ -19,7 +19,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
     private let questionsAmount: Int = 10 //общее количество вопросов для квиза. Пусть оно будет равно десяти.
-    //private var questionFactory: QuestionFactoryProtocol? = QuestionFactory()
     private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion? //вопрос, который видит пользователь.
     private var alertPresenter = AlertPresenter()
@@ -28,7 +27,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        activityIndicator.hidesWhenStopped = true
         imageView.layer.cornerRadius = 20
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         //let statisticService = StatisticService()
@@ -150,7 +149,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
         imageView.layer.cornerRadius = 20
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in //[weak self] что бы не держать контроллер в памятилишний раз
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self else { return }
 
             self.showNextQuestionOrResult()
@@ -163,7 +162,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     // MARK: - Helpers
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         QuizStepViewModel(
-            image: UIImage(data: model.image) ?? UIImage(),
+            image: UIImage(data: model.imageData) ?? UIImage(),
             question: model.text,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)"
         )
@@ -176,10 +175,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         buttonYes.isUserInteractionEnabled = enabled
     }
     
-    private func showLoadingIndicator() {
-        activityIndicator.isHidden = false
-        activityIndicator.startAnimating()
-    }
     
     /* комментарий к ревьюеру: брат, я понимаю, что свифт дает возможность писать это все компактней
        например опускать completion и фигачить замыкание прямо при объявлении model.
@@ -215,12 +210,21 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     func didLoadDataFromServer() {
-        activityIndicator.isHidden = true
+        hideLoadingIndicator()
         questionFactory?.requestNextQuestion()
     }
     
     func didFailToLoadData(with error: Error) {
         showNetworkError(message: error.localizedDescription) // возьмём в качестве сообщения описание ошибки
+    }
+    
+    
+    private func showLoadingIndicator() {
+        activityIndicator.startAnimating()
+    }
+
+    private func hideLoadingIndicator() {
+        activityIndicator.stopAnimating()
     }
     
 }

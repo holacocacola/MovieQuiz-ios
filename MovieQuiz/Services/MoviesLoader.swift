@@ -11,8 +11,15 @@ protocol MoviesLoading {
 }
 
 struct MoviesLoader: MoviesLoading {
+    
+    enum MoviesLoaderError: Error {
+        case apiError(String)
+        case emptyMoviesList
+    }
+    
     // MARK: - NetworkClient
     private let networkClient = NetworkClient()
+    private let decoder = JSONDecoder()
 
     // MARK: - URL
     private var mostPopularMoviesUrl: URL {
@@ -32,7 +39,19 @@ struct MoviesLoader: MoviesLoading {
             switch result {
             case Result.success(let data):
                 do {
-                    let movies = try JSONDecoder().decode(MostPopularMovies.self, from: data)
+                    // декодируем MostPopularMovies
+                    let movies = try decoder.decode(MostPopularMovies.self, from: data)
+                    
+                    // проверили errorMessage: если там не пусто — считаем это ошибкой
+                    if !movies.errorMessage.isEmpty {
+                        handler(Result.failure(MoviesLoaderError.apiError(movies.errorMessage)))
+                    }
+                    
+                    // если items пустой — тоже считаем это ошибкой
+                    if movies.items.isEmpty {
+                        handler(Result.failure(MoviesLoaderError.emptyMoviesList))
+                    }
+                    
                     handler(Result.success(movies))
                 } catch {
                     //print(error)

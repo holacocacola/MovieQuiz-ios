@@ -8,9 +8,9 @@ final class QuestionFactory: QuestionFactoryProtocol {
     private weak var delegate: QuestionFactoryDelegate?
     
     init(moviesLoader: MoviesLoading, delegate: QuestionFactoryDelegate?) {
-            self.moviesLoader = moviesLoader
-            self.delegate = delegate
-        }
+        self.moviesLoader = moviesLoader
+        self.delegate = delegate
+    }
     
     private var movies: [MostPopularMovie] = []
     
@@ -55,13 +55,13 @@ final class QuestionFactory: QuestionFactoryProtocol {
                 // трюк с созданием данных из URL, который в каком-то из следующих спринтов нужно будет переписать
                 imageData = try Data(contentsOf: movie.resizedImageURL)
             } catch {
-                print("Failed to load image")
+                self.delegate?.didFailToLoadData(with: error)
             }
             
             let question = makeQuestion(for: movie)
 
             let quizQuestion = QuizQuestion(
-                image: imageData,
+                imageData: imageData,
                 text: question.text,
                 correctAnswer: question.correctAnswer
             )
