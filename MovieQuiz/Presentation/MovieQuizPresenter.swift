@@ -12,11 +12,11 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     private weak var viewController: MovieQuizViewControllerProtocol?
     
     init(viewController: MovieQuizViewControllerProtocol) {
-        viewController.showLoadingIndicator()
-        questionFactory?.loadData()
         self.viewController = viewController
         statisticService = StatisticService()
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+        viewController.showLoadingIndicator()
+        questionFactory?.loadData()
     }
     
     private func isLastQuestion() -> Bool {
