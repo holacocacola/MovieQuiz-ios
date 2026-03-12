@@ -46,6 +46,15 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         correctAnswers = 0
         questionFactory?.requestNextQuestion()
     }
+
+    
+    /*Нашел не учтенный в курсе момент: кнопка “Попробовать ещё раз” просто закрывает алерт
+     и не запускает загрузку заново.
+     Добавил отдельный метод для повторной загрузки. */
+    func retryLoadData() {
+        viewController?.showLoadingIndicator()
+        questionFactory?.loadData()
+    }
     
     func noButtonClicked() {
         didAnswer(isYes: false)

@@ -68,7 +68,12 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         // создаю отложенное действие
         let action: () -> Void = { [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.presenter.restartGame() //выполнение логику
+            
+            // В курсе хуета. При сетевой ошибке данные фильмов вообще не загружаются, поэтому нужно делать не “рестарт игры”, а повторную загрузку данных, о котором никто не подумал.
+            //strongSelf.presenter.restartGame() //это нахуй
+            strongSelf.presenter.retryLoadData() //это норм
+            
+            
         }
         
         // создание модели алерта + отложенное действие action
