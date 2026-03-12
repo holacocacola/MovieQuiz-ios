@@ -5,7 +5,6 @@ import Foundation
     их в модель данных MostPopularMovies.
  */
 
-// не ебу зачем это, в курсе ничего не объяснили зачем и нахуя - просто создайте
 protocol MoviesLoading {
     func loadMovies(handler: @escaping (Result<MostPopularMovies, Error>) -> Void)
 }
@@ -18,7 +17,12 @@ struct MoviesLoader: MoviesLoading {
     }
     
     // MARK: - NetworkClient
-    private let networkClient = NetworkClient()
+    private let networkClient: NetworkRouting
+    
+    init(networkClient: NetworkRouting = NetworkClient()) {
+        self.networkClient = networkClient
+    }
+
     private let decoder = JSONDecoder()
 
     // MARK: - URL

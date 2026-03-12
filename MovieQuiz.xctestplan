@@ -1,0 +1,30 @@
+{
+  "configurations" : [
+    {
+      "id" : "AE168B24-EE31-4538-86D4-55362F869520",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:MovieQuiz.xcodeproj",
+      "identifier" : "AD1ABAAD2831907B00B3E448",
+      "name" : "MovieQuiz"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:MovieQuiz.xcodeproj",
+        "identifier" : "828852A82F5DE306000C91B8",
+        "name" : "MovieQuizTests"
+      }
+    }
+  ],
+  "version" : 1
+}

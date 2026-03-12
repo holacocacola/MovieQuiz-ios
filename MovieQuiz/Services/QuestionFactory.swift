@@ -14,10 +14,6 @@ final class QuestionFactory: QuestionFactoryProtocol {
     
     private var movies: [MostPopularMovie] = []
     
-//    func setup(delegate: QuestionFactoryDelegate?) {
-//        self.delegate = delegate
-//    }
-    
     
     // MARK: - Mock Data
 //    private let questions: [QuizQuestion] = [
