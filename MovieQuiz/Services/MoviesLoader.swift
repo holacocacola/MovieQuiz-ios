@@ -17,9 +17,9 @@ struct MoviesLoader: MoviesLoading {
     }
     
     // MARK: - NetworkClient
-    private let networkClient: NetworkRouting
+    private let networkClient: NetworkClient
     
-    init(networkClient: NetworkRouting = NetworkClient()) {
+    init(networkClient: NetworkClient = NetworkClient()) {
         self.networkClient = networkClient
     }
 
@@ -65,7 +65,6 @@ struct MoviesLoader: MoviesLoading {
                 //print(error)
                 handler(Result.failure(error))
             }
-
         }
 
         // выполнение сетевого запроса

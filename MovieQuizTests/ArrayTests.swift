@@ -1,7 +1,7 @@
 import XCTest
 @testable import MovieQuiz
 
-class ArrayTests: XCTestCase {
+final class ArrayTests: XCTestCase {
     
     //если мы берём элемент по правильному индексу, то получаем правильное значение
     func testGetValueInRange() throws {

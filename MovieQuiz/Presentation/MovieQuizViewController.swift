@@ -4,12 +4,12 @@ import UIKit
 final class MovieQuizViewController: UIViewController, MovieQuizViewControllerProtocol {
     
     // MARK: - Outlets
-    @IBOutlet private var buttonNo: UIButton!
-    @IBOutlet private var buttonYes: UIButton!
-    @IBOutlet private var counterLabel: UILabel!
-    @IBOutlet private var imageView: UIImageView!
-    @IBOutlet private var textLabel: UILabel!
-    @IBOutlet private var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet private weak var buttonNo: UIButton!
+    @IBOutlet private weak var buttonYes: UIButton!
+    @IBOutlet private weak var counterLabel: UILabel!
+    @IBOutlet private weak var imageView: UIImageView!
+    @IBOutlet private weak var textLabel: UILabel!
+    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
     
     
     // MARK: - State
@@ -22,7 +22,6 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     override func viewDidLoad() {
         super.viewDidLoad()
         activityIndicator.hidesWhenStopped = true
-        //imageView.layer.cornerRadius = 20
         presenter = MovieQuizPresenter(viewController: self)
     }
     
@@ -68,12 +67,7 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         // создаю отложенное действие
         let action: () -> Void = { [weak self] in
             guard let strongSelf = self else { return }
-            
-            // В курсе хуета. При сетевой ошибке данные фильмов вообще не загружаются, поэтому нужно делать не “рестарт игры”, а повторную загрузку данных, о котором никто не подумал.
-            //strongSelf.presenter.restartGame() //это нахуй
-            strongSelf.presenter.retryLoadData() //это норм
-            
-            
+            strongSelf.presenter.retryLoadData() // повторная загрузка данных
         }
         
         // создание модели алерта + отложенное действие action

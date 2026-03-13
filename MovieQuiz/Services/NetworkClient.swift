@@ -1,10 +1,10 @@
 import Foundation
 
-protocol NetworkRouting {
+protocol NetworkClientProtocol {
     func fetch(url: URL, handler: @escaping (Result<Data, Error>) -> Void)
 }
 
-struct NetworkClient: NetworkRouting {
+struct NetworkClient: NetworkClientProtocol {
     
     private enum NetworkError: Error {
         case codeError
@@ -35,12 +35,10 @@ struct NetworkClient: NetworkRouting {
                 }
             }
             
-
             // Проверяем пришли ли сами данные. Если сервер не прислал тело ответа - просто выходим.
             guard let data = data else { return }
             // если все норм, то отдаем успех
             handler(Result.success(data))
-            
         }
         
         // запуск задачи
